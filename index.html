@@ -48,12 +48,6 @@ select,input{padding:10px;border-radius:8px;border:none;width:100%;margin:10px 0
 #calendarTable td{cursor:pointer;transition:.3s;}
 #calendarTable td.available:hover{background:#28a828;}
 #calendarTable td.booked{background:#7a1f1f;color:#ccc;cursor:not-allowed;}
-
-#slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:15px;}
-.time-slot{padding:10px;border-radius:8px;cursor:pointer;transition:.3s;}
-.time-slot.available{background:#1f7a1f}
-.time-slot.available:hover{background:#28a828}
-.time-slot.booked{background:#7a1f1f;cursor:not-allowed;color:#ccc}
 </style>
 
 <!-- Firebase SDK -->
@@ -88,7 +82,7 @@ select,input{padding:10px;border-radius:8px;border:none;width:100%;margin:10px 0
 <section id="services">
 <h2>Usluge</h2>
 <div class="cards">
-  <div class="card"><h3>Basic</h3><p>60 min</p><p>Osnovno pranje spolja i unutra, brisanje i čišćenje stakala.</p></div>
+  <div class="card"><h3>Basic</h3><p>60 min</p><p>Osnovno pranje spolja i unutra, brisanje stakala.</p></div>
   <div class="card"><h3>Standard</h3><p>90 min</p><p>Basic + dubinsko čišćenje enterijera i vakumiranje tepiha.</p></div>
   <div class="card"><h3>Premium</h3><p>120 min</p><p>Standard + poliranje karoserije, voskiranje i detaljno čišćenje motora.</p></div>
 </div>
@@ -224,54 +218,63 @@ function highlightDate(td){
   td.style.border='2px solid #00c2ff';
 }
 
-// --- Populate time dropdown sa zauzetim terminima ---
+// --- Populate time dropdown ---
 function populateTimeSelect(){
-  timeSelect.innerHTML="";
-  if(!selectedDate) return;
-  const dateStr=`${selectedDate.toString().padStart(2,'0')}/${today.getMonth()+1}`;
-  const duration = parseInt(packageSelect.value);
+    timeSelect.innerHTML = "";
+    if(!selectedDate) return;
 
-  db.ref("bookings").once("value",snap=>{
-    let dayBookings=[];
-    snap.forEach(s=>{
-      if(s.val().date === dateStr) dayBookings.push(s.val());
-    });
+    const dateStr = `${selectedDate.toString().padStart(2,'0')}/${today.getMonth()+1}`;
+    const duration = parseInt(packageSelect.value);
 
-    for(let h=17; h<22; h++){
-      for(let m of [0,30]){
-        let startTime = h*60 + m;
-        let endTime = startTime + duration;
-        let clash = dayBookings.some(b=>startTime < (b.time + b.duration) && endTime > b.time);
-        let option = document.createElement("option");
-        option.value = startTime;
-        option.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
-        if(clash){
-          option.disabled = true;
-          option.innerText += " (zauzeto)";
+    db.ref("bookings").once("value", snap => {
+        let dayBookings = [];
+        snap.forEach(s => {
+            if(s.val().date === dateStr) dayBookings.push(s.val());
+        });
+
+        let hasAvailable = false;
+
+        for(let h=17; h<22; h++){
+            for(let m of [0,30]){
+                let startTime = h*60 + m;
+                let endTime = startTime + duration;
+
+                let clash = dayBookings.some(b => startTime < (b.time + b.duration) && endTime > b.time);
+                let option = document.createElement("option");
+                option.value = startTime;
+                option.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+
+                if(clash){
+                    option.disabled = true;
+                    option.innerText += " (zauzeto)";
+                } else {
+                    hasAvailable = true;
+                }
+
+                timeSelect.appendChild(option);
+            }
         }
-        timeSelect.appendChild(option);
-      }
-    }
-    document.getElementById("confirmBooking").disabled = !timeSelect.value;
-  });
+
+        document.getElementById("confirmBooking").disabled = !hasAvailable;
+    });
 }
 
-// --- Confirm booking ---
+packageSelect.addEventListener("change", () => { if(selectedDate) populateTimeSelect(); });
+
+// Confirm booking
 document.getElementById("confirmBooking").addEventListener("click",()=>{
-  if(!selectedDate || !timeSelect.value) { alert("Izaberite datum i vreme"); return; }
-  const packageName = packageSelect.options[packageSelect.selectedIndex].text;
-  const timeVal = parseInt(timeSelect.value);
-  const duration = parseInt(packageSelect.value);
-  const dateStr=`${selectedDate.toString().padStart(2,'0')}/${today.getMonth()+1}`;
+    if(!selectedDate || !timeSelect.value) { alert("Izaberite datum i vreme"); return; }
+    const packageName = packageSelect.options[packageSelect.selectedIndex].text;
+    const timeVal = parseInt(timeSelect.value);
+    const duration = parseInt(packageSelect.value);
+    const dateStr=`${selectedDate.toString().padStart(2,'0')}/${today.getMonth()+1}`;
 
-  db.ref("bookings").push({date:dateStr,time:timeVal,duration,package:packageName});
-  alert("Termin rezervisan!");
-  window.open(`https://wa.me/381668009318?text=Rezervacija ${dateStr} Paket: ${packageName} Vreme: ${Math.floor(timeVal/60)}:${(timeVal%60).toString().padStart(2,'0')}`);
-  closeBooking();
+    db.ref("bookings").push({date:dateStr,time:timeVal,duration,package:packageName});
+    alert("Termin rezervisan!");
+    window.open(`https://wa.me/381668009318
+    ?text=Rezervacija ${dateStr} Paket: ${packageName} Vreme: ${Math.floor(timeVal/60)}:${(timeVal%60).toString().padStart(2,'0')}`);
+    closeBooking();
 });
-
-// Kada promeni paket osveži vreme
-packageSelect.addEventListener("change",populateTimeSelect);
 
 // --- Admin ---
 function openAdmin(){document.getElementById("adminPage").classList.remove("hidden");}
