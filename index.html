@@ -271,8 +271,7 @@ document.getElementById("confirmBooking").addEventListener("click",()=>{
 
     db.ref("bookings").push({date:dateStr,time:timeVal,duration,package:packageName});
     alert("Termin rezervisan!");
-    window.open(`https://wa.me/381668009318
-    ?text=Rezervacija ${dateStr} Paket: ${packageName} Vreme: ${Math.floor(timeVal/60)}:${(timeVal%60).toString().padStart(2,'0')}`);
+    window.open(`https://wa.me/381668009318?text=Rezervacija ${dateStr} Paket: ${packageName} Vreme: ${Math.floor(timeVal/60)}:${(timeVal%60).toString().padStart(2,'0')}`);
     closeBooking();
 });
 
