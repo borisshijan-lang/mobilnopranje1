@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobilno Pranje PRO</title>
+
+<meta name="description" content="Mobilno pranje automobila kod vas. Zakazivanje termina online.">
+<meta name="keywords" content="mobilno pranje, detailing, auto pranje, Beograd">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+body{background:#0f0f0f;color:#fff;scroll-behavior:smooth}
+a{text-decoration:none;color:inherit}
+section{padding:80px 10%}
+h2{text-align:center;margin-bottom:40px;font-size:36px}
+
+/* NAVBAR */
+nav{
+position:fixed;top:0;width:100%;
+background:#000;display:flex;justify-content:space-between;align-items:center;
+padding:15px 10%;z-index:1000;
+}
+.logo{font-weight:700;font-size:22px}
+.nav-links{display:flex;gap:25px}
+.nav-links a:hover{color:#00c2ff}
+.btn{background:#00c2ff;padding:12px 25px;border-radius:30px;cursor:pointer}
+
+/* HERO */
+.hero{
+height:100vh;background:url('https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg') center/cover no-repeat;
+display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+}
+.hero h1{font-size:55px;margin-bottom:15px}
+.hero p{font-size:20px}
+
+/* CARDS */
+.cards{display:flex;flex-wrap:wrap;gap:30px;justify-content:center}
+.card{background:#1a1a1a;padding:25px;border-radius:15px;width:280px;text-align:center;transition:.3s}
+.card:hover{transform:translateY(-10px);background:#222}
+
+/* GALLERY */
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
+.gallery img{width:100%;border-radius:10px}
+
+/* FAQ */
+.faq-item{margin-bottom:15px}
+.faq-item p{display:none;color:#ccc;margin-top:5px}
+
+/* KALENDAR */
+#calendar{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:15px;margin-top:30px}
+.time-slot{padding:15px;text-align:center;border-radius:8px;cursor:pointer}
+.available{background:#1f7a1f}
+.booked{background:#7a1f1f;cursor:not-allowed}
+
+/* INPUT */
+input,select,textarea{padding:10px;border:none;border-radius:8px;width:100%;margin:5px 0}
+
+/* FOOTER */
+footer{background:#000;text-align:center;padding:30px;color:#aaa}
+.hidden{display:none}
+.admin-panel{background:#111;padding:20px;margin-top:20px;border-radius:10px}
+</style>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+</head>
+<body>
+
+<nav>
+<div class="logo">MobilnoPranje</div>
+<div class="nav-links">
+<a href="#home">Početna</a>
+<a href="#services">Usluge</a>
+<a href="#prices">Cene</a>
+<a href="#gallery">Galerija</a>
+<a onclick="openBooking()">Zakazivanje</a>
+<a onclick="openAdmin()">Admin</a>
+</div>
+</nav>
+
+<section id="home" class="hero">
+<h1>Mobilno pranje vozila</h1>
+<p>Radno vreme 17:00 – 22:00</p>
+<div class="btn" onclick="openBooking()">Zakaži odmah</div>
+</section>
+
+<section id="services">
+<h2>Usluge</h2>
+<div class="cards">
+<div class="card"><h3>Basic</h3><p>60 min</p><p>20€</p></div>
+<div class="card"><h3>Standard</h3><p>90 min</p><p>35€</p></div>
+<div class="card"><h3>Premium</h3><p>120 min</p><p>60€</p></div>
+</div>
+</section>
+
+<section id="prices">
+<h2>Cenovnik</h2>
+<div class="cards">
+<div class="card"><h3>Basic</h3><p>20€</p></div>
+<div class="card"><h3>Standard</h3><p>35€</p></div>
+<div class="card"><h3>Premium</h3><p>60€</p></div>
+</div>
+</section>
+
+<section id="gallery">
+<h2>Galerija</h2>
+<div class="gallery">
+<img src="https://images.pexels.com/photos/3354648/pexels-photo-3354648.jpeg">
+<img src="https://images.pexels.com/photos/372810/pexels-photo-372810.jpeg">
+<img src="https://images.pexels.com/photos/6873089/pexels-photo-6873089.jpeg">
+</div>
+</section>
+
+<section>
+<h2>FAQ</h2>
+<div class="faq-item">
+<h3 onclick="toggleFAQ(this)">Da li dolazite na adresu?</h3>
+<p>Da, dolazimo na vašu lokaciju.</p>
+</div>
+<div class="faq-item">
+<h3 onclick="toggleFAQ(this)">Koliko traje pranje?</h3>
+<p>U zavisnosti od paketa 60–120 minuta.</p>
+</div>
+</section>
+
+<!-- Booking -->
+<section id="bookingPage" class="hidden">
+<h2>Zakazivanje termina</h2>
+<select id="package">
+<option value="60">Basic (60 min)</option>
+<option value="90">Standard (90 min)</option>
+<option value="120">Premium (120 min)</option>
+</select>
+<input type="date" id="datePicker">
+<div id="calendar"></div>
+</section>
+
+<!-- Admin -->
+<section id="adminPage" class="hidden">
+<h2>Admin Panel</h2>
+<input type="email" id="adminEmail" placeholder="Email">
+<input type="password" id="adminPass" placeholder="Šifra">
+<div class="btn" onclick="loginAdmin()">Login</div>
+<div id="adminContent" class="admin-panel hidden">
+<h3>Rezervacije</h3>
+<div id="adminBookings"></div>
+</div>
+</section>
+
+<footer>
+<p>© 2026 Mobilno Pranje</p>
+</footer>
+
+<script>
+// --- Firebase Config ---
+const firebaseConfig = {
+  apiKey: "TVOJ_API_KEY",
+  authDomain: "TVOJ_PROJECT.firebaseapp.com",
+  databaseURL: "https://TVOJ_PROJECT.firebaseio.com",
+  projectId: "TVOJ_PROJECT",
+  storageBucket: "TVOJ_PROJECT.appspot.com",
+  messagingSenderId: "TVOJ_ID",
+  appId: "TVOJ_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+const auth=firebase.auth();
+
+// --- NAV / FAQ ---
+function toggleFAQ(el){let p=el.nextElementSibling;p.style.display=p.style.display==="block"?"none":"block";}
+function openBooking(){document.getElementById("bookingPage").classList.remove("hidden");window.scrollTo(0,document.getElementById("bookingPage").offsetTop-80);}
+function openAdmin(){document.getElementById("adminPage").classList.remove("hidden");window.scrollTo(0,document.getElementById("adminPage").offsetTop-80);}
+
+// --- Booking Calendar ---
+const startHour=17; const endHour=22;
+const calendar=document.getElementById("calendar");
+const datePicker=document.getElementById("datePicker");
+const packageSelect=document.getElementById("package");
+
+datePicker.addEventListener("change",loadSlots);
+packageSelect.addEventListener("change",loadSlots);
+
+function loadSlots(){
+calendar.innerHTML="";
+const date=datePicker.value;
+const duration=parseInt(packageSelect.value);
+if(!date) return;
+
+db.ref("bookings").once("value",snap=>{
+let dayBookings=[];
+snap.forEach(s=>{if(s.val().date===date) dayBookings.push(s.val());});
+
+for(let h=startHour;h<endHour;h++){
+for(let m of [0,30]){
+let start=h*60+m;
+let end=start+duration;if(end>endHour*60) continue;
+
+let clash=dayBookings.some(b=>start<(b.time+b.duration)&&end>b.time);
+let div=document.createElement("div");
+div.classList.add("time-slot");
+div.innerText=`${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}`;
+if(clash){div.classList.add("booked");}else{
+div.classList.add("available");
+div.onclick=()=>bookSlot(date,start,duration);
+}
+calendar.appendChild(div);
+}
+}
+});
+}
+
+function bookSlot(date,time,duration){
+const packageName=packageSelect.options[packageSelect.selectedIndex].text;
+db.ref("bookings").push({date,time,duration,package:packageName});
+alert("Termin rezervisan!");
+window.open("https://wa.me/381600000000?text=Rezervacija "+date+" Paket: "+packageName);
+loadSlots();
+}
+
+// --- Admin ---
+function loginAdmin(){
+const email=document.getElementById("adminEmail").value;
+const pass=document.getElementById("adminPass").value;
+auth.signInWithEmailAndPassword(email,pass)
+.then(()=>{document.getElementById("adminContent").classList.remove("hidden");loadAdmin();})
+.catch(e=>alert("Login failed: "+e.message));
+}
+
+function loadAdmin(){
+db.ref("bookings").once("value",snap=>{
+const container=document.getElementById("adminBookings");
+container.innerHTML="";
+snap.forEach(s=>{
+let b=s.val();
+let div=document.createElement("div");
+div.innerHTML=`${b.date} - ${Math.floor(b.time/60)}:${(b.time%60).toString().padStart(2,"0")} Paket: ${b.package} 
+<button onclick="deleteBooking('${s.key}')">Obriši</button>`;
+container.appendChild(div);
+});
+});
+}
+
+function deleteBooking(key){
+db.ref("bookings/"+key).remove();
+loadAdmin();
+}
+</script>
+</body>
+</html>
