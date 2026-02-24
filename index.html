@@ -8,13 +8,13 @@
 
 <style>
 body{font-family:Poppins,sans-serif;background:#0f0f0f;color:#fff;margin:0;scroll-behavior:smooth}
-a{text-decoration:none;color:inherit}
+a{text-decoration:none;color:inherit;cursor:pointer}
 section{padding:80px 10%}
 h2{text-align:center;margin-bottom:40px;font-size:36px}
 
 /* NAVBAR */
 nav{position:fixed;top:0;width:100%;background:#000;display:flex;justify-content:space-between;align-items:center;padding:15px 10%;z-index:1000;}
-.logo{font-weight:700;font-size:22px}
+.logo{font-weight:700;font-size:22px;cursor:pointer;}
 .nav-links{display:flex;gap:25px}
 .nav-links a:hover{color:#00c2ff}
 .btn{background:#00c2ff;padding:12px 25px;border-radius:30px;cursor:pointer;border:none;transition:.3s;}
@@ -40,7 +40,7 @@ nav{position:fixed;top:0;width:100%;background:#000;display:flex;justify-content
 
 /* BOOKING MODAL */
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;z-index:10000;}
-.modal-content{background:#111;padding:30px;border-radius:15px;width:90%;max-width:450px;text-align:center;position:relative;}
+.modal-content{background:#111;padding:30px;border-radius:15px;width:90%;max-width:500px;text-align:center;position:relative;max-height:90vh;overflow-y:auto;}
 .close-btn{position:absolute;top:15px;right:15px;font-size:20px;cursor:pointer;}
 select,input{padding:10px;border-radius:8px;border:none;width:100%;margin:10px 0;font-size:16px}
 #calendarTable{width:100%;margin-top:15px;border-collapse:collapse;text-align:center;}
@@ -64,8 +64,9 @@ select,input{padding:10px;border-radius:8px;border:none;width:100%;margin:10px 0
 </head>
 <body>
 
+<!-- NAVBAR -->
 <nav>
-  <div class="logo">MobilnoPranje</div>
+  <div class="logo" onclick="scrollToTop()">MobilnoPranje</div>
   <div class="nav-links">
     <a href="#home">Početna</a>
     <a href="#services">Usluge</a>
@@ -76,30 +77,34 @@ select,input{padding:10px;border-radius:8px;border:none;width:100%;margin:10px 0
   </div>
 </nav>
 
+<!-- HERO -->
 <section id="home" class="hero">
   <h1>Mobilno pranje vozila</h1>
   <p>Radno vreme 17:00 – 22:00</p>
   <div class="btn" onclick="openBooking()">Zakaži odmah</div>
 </section>
 
+<!-- USLUGE -->
 <section id="services">
 <h2>Usluge</h2>
 <div class="cards">
-  <div class="card"><h3>Basic</h3><p>60 min</p><p>20€</p></div>
-  <div class="card"><h3>Standard</h3><p>90 min</p><p>35€</p></div>
-  <div class="card"><h3>Premium</h3><p>120 min</p><p>60€</p></div>
+  <div class="card"><h3>Basic</h3><p>60 min</p><p>Osnovno pranje spolja i unutra, brisanje i čišćenje stakala.</p></div>
+  <div class="card"><h3>Standard</h3><p>90 min</p><p>Basic + dubinsko čišćenje enterijera i vakumiranje tepiha.</p></div>
+  <div class="card"><h3>Premium</h3><p>120 min</p><p>Standard + poliranje karoserije, voskiranje i detaljno čišćenje motora.</p></div>
 </div>
 </section>
 
+<!-- CENE -->
 <section id="prices">
 <h2>Cenovnik</h2>
 <div class="cards">
-  <div class="card"><h3>Basic</h3><p>20€</p></div>
-  <div class="card"><h3>Standard</h3><p>35€</p></div>
-  <div class="card"><h3>Premium</h3><p>60€</p></div>
+  <div class="card"><h3>Basic</h3><p>20€</p><p>Osnovno pranje vozila spolja i unutra, brisanje stakala.</p></div>
+  <div class="card"><h3>Standard</h3><p>35€</p><p>Basic paket + dubinsko čišćenje enterijera i tepih vakum.</p></div>
+  <div class="card"><h3>Premium</h3><p>60€</p><p>Standard paket + poliranje, voskiranje i detaljno čišćenje motora.</p></div>
 </div>
 </section>
 
+<!-- GALERIJA -->
 <section id="gallery">
 <h2>Galerija</h2>
 <div class="gallery">
@@ -109,6 +114,7 @@ select,input{padding:10px;border-radius:8px;border:none;width:100%;margin:10px 0
 </div>
 </section>
 
+<!-- FAQ -->
 <section>
 <h2>FAQ</h2>
 <div class="faq-item">
@@ -127,24 +133,27 @@ select,input{padding:10px;border-radius:8px;border:none;width:100%;margin:10px 0
     <span class="close-btn" onclick="closeBooking()">&times;</span>
     <h2>Zakazivanje termina</h2>
 
+    <label>Paket:</label>
     <select id="packageSelect">
       <option value="60">Basic (60 min)</option>
       <option value="90">Standard (90 min)</option>
       <option value="120">Premium (120 min)</option>
     </select>
 
-    <div style="margin-top:10px;">
-      <span id="monthLabel"></span>
-      <table id="calendarTable">
-        <thead><tr id="calendarHeader"></tr></thead>
-        <tbody id="calendarBody"></tbody>
-      </table>
-    </div>
+    <label>Datum:</label>
+    <table id="calendarTable">
+      <thead><tr id="calendarHeader"></tr></thead>
+      <tbody id="calendarBody"></tbody>
+    </table>
 
-    <div id="slots"></div>
+    <label>Vreme:</label>
+    <select id="timeSelect"></select>
+
+    <button id="confirmBooking" class="btn" style="margin-top:15px;" disabled>Pošalji zahtev</button>
   </div>
 </div>
 
+<!-- ADMIN -->
 <section id="adminPage" class="hidden">
 <h2>Admin Panel</h2>
 <input type="email" id="adminEmail" placeholder="Email">
@@ -174,25 +183,24 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// --- NAV/FAQ ---
+// --- NAV / FAQ ---
+function scrollToTop(){window.scrollTo({top:0,behavior:"smooth"});}
 function toggleFAQ(el){let p=el.nextElementSibling;p.style.display=p.style.display==="block"?"none":"block";}
-const modal=document.getElementById("bookingModal");
-function openBooking(){ modal.style.display="flex"; renderCalendar(); }
-function closeBooking(){ modal.style.display="none"; }
-window.onclick = e => { if(e.target === modal) closeBooking(); }
 
-// --- Calendar Variables ---
-const packageSelect=document.getElementById("packageSelect");
+// --- BOOKING MODAL ---
+const modal=document.getElementById("bookingModal");
 const calendarHeader=document.getElementById("calendarHeader");
 const calendarBody=document.getElementById("calendarBody");
-const monthLabel=document.getElementById("monthLabel");
-const slotsDiv=document.getElementById("slots");
-const startHour=17,endHour=22;
-
-// --- Render Calendar for current month ---
+const packageSelect=document.getElementById("packageSelect");
+const timeSelect=document.getElementById("timeSelect");
 let today=new Date();
 let selectedDate=null;
 
+function openBooking(){ modal.style.display="flex"; renderCalendar(); populateTimeSelect(); }
+function closeBooking(){ modal.style.display="none"; }
+window.onclick = e => { if(e.target === modal) closeBooking(); }
+
+// --- Calendar ---
 function renderCalendar(){
   calendarHeader.innerHTML="";
   calendarBody.innerHTML="";
@@ -200,53 +208,94 @@ function renderCalendar(){
   for(let d of days){let th=document.createElement("th");th.innerText=d;calendarHeader.appendChild(th);}
   let firstDay=new Date(today.getFullYear(),today.getMonth(),1).getDay();
   let lastDate=new Date(today.getFullYear(),today.getMonth()+1,0).getDate();
-  monthLabel.innerText=`${today.toLocaleString('default',{month:'long'})}`;
-
   let row=document.createElement("tr");
-  for(let i=0;i<firstDay;i++){let td=document.createElement("td");row.appendChild(td);}
+  for(let i=0;i<firstDay;i++){row.appendChild(document.createElement("td"));}
   for(let d=1;d<=lastDate;d++){
-    if(row.children.length>=7){calendarBody.appendChild(row); row=document.createElement("tr");}
-    let td=document.createElement("td"); td.innerText=d; td.classList.add("available");
-    td.onclick=()=>{ selectedDate=d; loadSlotsForDate(d); }
+    if(row.children.length>=7){calendarBody.appendChild(row);row=document.createElement("tr");}
+    let td=document.createElement("td");
+    td.innerText=d; td.classList.add("available");
+    td.onclick=()=>{selectedDate=d; highlightDate(td); populateTimeSelect();}
     row.appendChild(td);
   }
   calendarBody.appendChild(row);
 }
+function highlightDate(td){
+  document.querySelectorAll("#calendarTable td").forEach(e=>e.style.border='');
+  td.style.border='2px solid #00c2ff';
+}
 
-// --- Load Slots ---
-function loadSlotsForDate(day){
-  slotsDiv.innerHTML="";
-  const duration=parseInt(packageSelect.value);
-  const dateStr=`${day.toString().padStart(2,'0')}/${today.getMonth()+1}`;
+// --- Populate time dropdown sa zauzetim terminima ---
+function populateTimeSelect(){
+  timeSelect.innerHTML="";
+  if(!selectedDate) return;
+  const dateStr=`${selectedDate.toString().padStart(2,'0')}/${today.getMonth()+1}`;
+  const duration = parseInt(packageSelect.value);
+
   db.ref("bookings").once("value",snap=>{
     let dayBookings=[];
-    snap.forEach(s=>{ if(s.val().date===dateStr) dayBookings.push(s.val()); });
-    for(let h=startHour;h<endHour;h++){
+    snap.forEach(s=>{
+      if(s.val().date === dateStr) dayBookings.push(s.val());
+    });
+
+    for(let h=17; h<22; h++){
       for(let m of [0,30]){
-        let start=h*60+m,end=start+duration;if(end>endHour*60) continue;
-        let clash=dayBookings.some(b=>start<(b.time+b.duration)&&end>b.time);
-        let slot=document.createElement("div");
-        slot.classList.add("time-slot");
-        slot.innerText=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
-        if(clash){slot.classList.add("booked");}else{
-          slot.classList.add("available");
-          slot.onclick=()=>bookSlot(dateStr,start,duration);
+        let startTime = h*60 + m;
+        let endTime = startTime + duration;
+        let clash = dayBookings.some(b=>startTime < (b.time + b.duration) && endTime > b.time);
+        let option = document.createElement("option");
+        option.value = startTime;
+        option.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+        if(clash){
+          option.disabled = true;
+          option.innerText += " (zauzeto)";
         }
-        slotsDiv.appendChild(slot);
+        timeSelect.appendChild(option);
       }
     }
+    document.getElementById("confirmBooking").disabled = !timeSelect.value;
   });
 }
 
-packageSelect.addEventListener("change",()=>{ if(selectedDate) loadSlotsForDate(selectedDate); });
+// --- Confirm booking ---
+document.getElementById("confirmBooking").addEventListener("click",()=>{
+  if(!selectedDate || !timeSelect.value) { alert("Izaberite datum i vreme"); return; }
+  const packageName = packageSelect.options[packageSelect.selectedIndex].text;
+  const timeVal = parseInt(timeSelect.value);
+  const duration = parseInt(packageSelect.value);
+  const dateStr=`${selectedDate.toString().padStart(2,'0')}/${today.getMonth()+1}`;
 
-function bookSlot(date,time,duration){
-  const packageName=packageSelect.options[packageSelect.selectedIndex].text;
-  db.ref("bookings").push({date,time,duration,package:packageName});
+  db.ref("bookings").push({date:dateStr,time:timeVal,duration,package:packageName});
   alert("Termin rezervisan!");
-  window.open(`https://wa.me/381668009318?text=Rezervacija ${date} Paket: ${packageName}`);
-  if(selectedDate) loadSlotsForDate(selectedDate);
+  window.open(`https://wa.me/381668009318?text=Rezervacija ${dateStr} Paket: ${packageName} Vreme: ${Math.floor(timeVal/60)}:${(timeVal%60).toString().padStart(2,'0')}`);
+  closeBooking();
+});
+
+// Kada promeni paket osveži vreme
+packageSelect.addEventListener("change",populateTimeSelect);
+
+// --- Admin ---
+function openAdmin(){document.getElementById("adminPage").classList.remove("hidden");}
+function loginAdmin(){
+  const email=document.getElementById("adminEmail").value;
+  const pass=document.getElementById("adminPass").value;
+  firebase.auth().signInWithEmailAndPassword(email,pass)
+  .then(()=>{document.getElementById("adminContent").classList.remove("hidden"); loadAdmin();})
+  .catch(e=>alert("Login failed: "+e.message));
 }
+function loadAdmin(){
+  db.ref("bookings").once("value",snap=>{
+    const container=document.getElementById("adminBookings");
+    container.innerHTML="";
+    snap.forEach(s=>{
+      let b=s.val();
+      let div=document.createElement("div");
+      div.innerHTML=`${b.date} - ${Math.floor(b.time/60)}:${(b.time%60).toString().padStart(2,'0')} Paket: ${b.package} 
+      <button onclick="deleteBooking('${s.key}')">Obriši</button>`;
+      container.appendChild(div);
+    });
+  });
+}
+function deleteBooking(key){db.ref("bookings/"+key).remove(); loadAdmin();}
 </script>
 </body>
 </html>
