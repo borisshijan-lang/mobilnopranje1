@@ -9,39 +9,47 @@
 <style>
 body{font-family:Poppins,sans-serif;background:#0f0f0f;color:#fff;margin:0;scroll-behavior:smooth}
 a{text-decoration:none;color:inherit}
-.nav-links a{margin-left:20px;cursor:pointer}
+section{padding:80px 10%}
+h2{text-align:center;margin-bottom:40px;font-size:36px}
+
+/* NAVBAR */
+nav{position:fixed;top:0;width:100%;background:#000;display:flex;justify-content:space-between;align-items:center;padding:15px 10%;z-index:1000;}
+.logo{font-weight:700;font-size:22px}
+.nav-links{display:flex;gap:25px}
+.nav-links a:hover{color:#00c2ff}
 .btn{background:#00c2ff;padding:12px 25px;border-radius:30px;cursor:pointer;border:none;transition:.3s;}
 .btn:hover{background:#0090cc}
 
-/* Modal Styles */
-.modal{
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.7);
-  justify-content:center; align-items:center;
-  z-index:10000;
-}
-.modal-content{
-  background:#111;
-  padding:30px;
-  border-radius:15px;
-  width:90%;
-  max-width:400px;
-  text-align:center;
-  position:relative;
-}
-.close-btn{
-  position:absolute;
-  top:15px; right:15px;
-  font-size:20px;
-  cursor:pointer;
-}
+/* HERO */
+.hero{height:100vh;background:url('https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg') center/cover no-repeat;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
+.hero h1{font-size:55px;margin-bottom:15px}
+.hero p{font-size:20px}
 
-/* Inputs */
-input,select{padding:10px;border-radius:8px;border:none;width:100%;margin:10px 0;font-size:16px}
-#calendar{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:15px}
+/* CARDS */
+.cards{display:flex;flex-wrap:wrap;gap:30px;justify-content:center}
+.card{background:#1a1a1a;padding:25px;border-radius:15px;width:280px;text-align:center;transition:.3s}
+.card:hover{transform:translateY(-10px);background:#222}
+
+/* GALLERY */
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
+.gallery img{width:100%;border-radius:10px}
+
+/* FAQ */
+.faq-item{margin-bottom:15px}
+.faq-item p{display:none;color:#ccc;margin-top:5px}
+
+/* BOOKING MODAL */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;z-index:10000;}
+.modal-content{background:#111;padding:30px;border-radius:15px;width:90%;max-width:450px;text-align:center;position:relative;}
+.close-btn{position:absolute;top:15px;right:15px;font-size:20px;cursor:pointer;}
+select,input{padding:10px;border-radius:8px;border:none;width:100%;margin:10px 0;font-size:16px}
+#calendarTable{width:100%;margin-top:15px;border-collapse:collapse;text-align:center;}
+#calendarTable th,#calendarTable td{padding:10px;border:1px solid #444;}
+#calendarTable td{cursor:pointer;transition:.3s;}
+#calendarTable td.available:hover{background:#28a828;}
+#calendarTable td.booked{background:#7a1f1f;color:#ccc;cursor:not-allowed;}
+
+#slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:15px;}
 .time-slot{padding:10px;border-radius:8px;cursor:pointer;transition:.3s;}
 .time-slot.available{background:#1f7a1f}
 .time-slot.available:hover{background:#28a828}
@@ -52,39 +60,108 @@ input,select{padding:10px;border-radius:8px;border:none;width:100%;margin:10px 0
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
 </head>
 <body>
 
-<nav style="padding:20px;background:#000;display:flex;justify-content:space-between;align-items:center;">
-  <div class="logo" style="font-weight:700;font-size:22px">MobilnoPranje</div>
+<nav>
+  <div class="logo">MobilnoPranje</div>
   <div class="nav-links">
+    <a href="#home">Početna</a>
+    <a href="#services">Usluge</a>
+    <a href="#prices">Cene</a>
+    <a href="#gallery">Galerija</a>
     <a onclick="openBooking()">Zakazivanje</a>
+    <a onclick="openAdmin()">Admin</a>
   </div>
 </nav>
 
-<section style="text-align:center;padding:100px 20px;">
+<section id="home" class="hero">
   <h1>Mobilno pranje vozila</h1>
   <p>Radno vreme 17:00 – 22:00</p>
-  <button class="btn" onclick="openBooking()">Zakaži odmah</button>
+  <div class="btn" onclick="openBooking()">Zakaži odmah</div>
 </section>
 
-<!-- Booking Modal -->
+<section id="services">
+<h2>Usluge</h2>
+<div class="cards">
+  <div class="card"><h3>Basic</h3><p>60 min</p><p>20€</p></div>
+  <div class="card"><h3>Standard</h3><p>90 min</p><p>35€</p></div>
+  <div class="card"><h3>Premium</h3><p>120 min</p><p>60€</p></div>
+</div>
+</section>
+
+<section id="prices">
+<h2>Cenovnik</h2>
+<div class="cards">
+  <div class="card"><h3>Basic</h3><p>20€</p></div>
+  <div class="card"><h3>Standard</h3><p>35€</p></div>
+  <div class="card"><h3>Premium</h3><p>60€</p></div>
+</div>
+</section>
+
+<section id="gallery">
+<h2>Galerija</h2>
+<div class="gallery">
+  <img src="https://images.pexels.com/photos/3354648/pexels-photo-3354648.jpeg">
+  <img src="https://images.pexels.com/photos/372810/pexels-photo-372810.jpeg">
+  <img src="https://images.pexels.com/photos/6873089/pexels-photo-6873089.jpeg">
+</div>
+</section>
+
+<section>
+<h2>FAQ</h2>
+<div class="faq-item">
+<h3 onclick="toggleFAQ(this)">Da li dolazite na adresu?</h3>
+<p>Da, dolazimo na vašu lokaciju.</p>
+</div>
+<div class="faq-item">
+<h3 onclick="toggleFAQ(this)">Koliko traje pranje?</h3>
+<p>U zavisnosti od paketa 60–120 minuta.</p>
+</div>
+</section>
+
+<!-- BOOKING MODAL -->
 <div id="bookingModal" class="modal">
   <div class="modal-content">
     <span class="close-btn" onclick="closeBooking()">&times;</span>
     <h2>Zakazivanje termina</h2>
+
     <select id="packageSelect">
       <option value="60">Basic (60 min)</option>
       <option value="90">Standard (90 min)</option>
       <option value="120">Premium (120 min)</option>
     </select>
-    <input type="date" id="datePicker">
-    <div id="calendar"></div>
+
+    <div style="margin-top:10px;">
+      <span id="monthLabel"></span>
+      <table id="calendarTable">
+        <thead><tr id="calendarHeader"></tr></thead>
+        <tbody id="calendarBody"></tbody>
+      </table>
+    </div>
+
+    <div id="slots"></div>
   </div>
 </div>
 
+<section id="adminPage" class="hidden">
+<h2>Admin Panel</h2>
+<input type="email" id="adminEmail" placeholder="Email">
+<input type="password" id="adminPass" placeholder="Šifra">
+<div class="btn" onclick="loginAdmin()">Login</div>
+<div id="adminContent" class="admin-panel hidden">
+<h3>Rezervacije</h3>
+<div id="adminBookings"></div>
+</div>
+</section>
+
+<footer>
+<p>© 2026 Mobilno Pranje</p>
+</footer>
+
 <script>
-// --- Firebase Setup ---
+// --- Firebase ---
 const firebaseConfig = {
   apiKey: "AIzaSyC10IWy6vUrqwIXtugXSdQoXEoaeKlcFu0",
   authDomain: "mobilnopranje-d60f6.firebaseapp.com",
@@ -97,65 +174,79 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// --- Modal Functions ---
-const modal = document.getElementById("bookingModal");
-function openBooking(){ modal.style.display = "flex"; }
-function closeBooking(){ modal.style.display = "none"; }
+// --- NAV/FAQ ---
+function toggleFAQ(el){let p=el.nextElementSibling;p.style.display=p.style.display==="block"?"none":"block";}
+const modal=document.getElementById("bookingModal");
+function openBooking(){ modal.style.display="flex"; renderCalendar(); }
+function closeBooking(){ modal.style.display="none"; }
+window.onclick = e => { if(e.target === modal) closeBooking(); }
 
-// --- Calendar Booking ---
-const startHour = 17;
-const endHour = 22;
-const calendar = document.getElementById("calendar");
-const datePicker = document.getElementById("datePicker");
-const packageSelect = document.getElementById("packageSelect");
+// --- Calendar Variables ---
+const packageSelect=document.getElementById("packageSelect");
+const calendarHeader=document.getElementById("calendarHeader");
+const calendarBody=document.getElementById("calendarBody");
+const monthLabel=document.getElementById("monthLabel");
+const slotsDiv=document.getElementById("slots");
+const startHour=17,endHour=22;
 
-datePicker.addEventListener("change", loadSlots);
-packageSelect.addEventListener("change", loadSlots);
+// --- Render Calendar for current month ---
+let today=new Date();
+let selectedDate=null;
 
-function loadSlots(){
-  calendar.innerHTML = "";
-  const date = datePicker.value;
-  const duration = parseInt(packageSelect.value);
-  if(!date) return;
+function renderCalendar(){
+  calendarHeader.innerHTML="";
+  calendarBody.innerHTML="";
+  const days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  for(let d of days){let th=document.createElement("th");th.innerText=d;calendarHeader.appendChild(th);}
+  let firstDay=new Date(today.getFullYear(),today.getMonth(),1).getDay();
+  let lastDate=new Date(today.getFullYear(),today.getMonth()+1,0).getDate();
+  monthLabel.innerText=`${today.toLocaleString('default',{month:'long'})}`;
 
-  db.ref("bookings").once("value", snap=>{
-    let dayBookings = [];
-    snap.forEach(s => { if(s.val().date === date) dayBookings.push(s.val()); });
+  let row=document.createElement("tr");
+  for(let i=0;i<firstDay;i++){let td=document.createElement("td");row.appendChild(td);}
+  for(let d=1;d<=lastDate;d++){
+    if(row.children.length>=7){calendarBody.appendChild(row); row=document.createElement("tr");}
+    let td=document.createElement("td"); td.innerText=d; td.classList.add("available");
+    td.onclick=()=>{ selectedDate=d; loadSlotsForDate(d); }
+    row.appendChild(td);
+  }
+  calendarBody.appendChild(row);
+}
 
-    for(let h=startHour; h<endHour; h++){
+// --- Load Slots ---
+function loadSlotsForDate(day){
+  slotsDiv.innerHTML="";
+  const duration=parseInt(packageSelect.value);
+  const dateStr=`${day.toString().padStart(2,'0')}/${today.getMonth()+1}`;
+  db.ref("bookings").once("value",snap=>{
+    let dayBookings=[];
+    snap.forEach(s=>{ if(s.val().date===dateStr) dayBookings.push(s.val()); });
+    for(let h=startHour;h<endHour;h++){
       for(let m of [0,30]){
-        let start = h*60 + m;
-        let end = start + duration;
-        if(end > endHour*60) continue;
-
-        let clash = dayBookings.some(b => start < (b.time + b.duration) && end > b.time);
-        let slot = document.createElement("div");
+        let start=h*60+m,end=start+duration;if(end>endHour*60) continue;
+        let clash=dayBookings.some(b=>start<(b.time+b.duration)&&end>b.time);
+        let slot=document.createElement("div");
         slot.classList.add("time-slot");
-        slot.innerText = `${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}`;
-        if(clash){ slot.classList.add("booked"); }
-        else{
+        slot.innerText=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+        if(clash){slot.classList.add("booked");}else{
           slot.classList.add("available");
-          slot.onclick = ()=>bookSlot(date, start, duration);
+          slot.onclick=()=>bookSlot(dateStr,start,duration);
         }
-        calendar.appendChild(slot);
+        slotsDiv.appendChild(slot);
       }
     }
   });
 }
 
-function bookSlot(date, time, duration){
-  const packageName = packageSelect.options[packageSelect.selectedIndex].text;
+packageSelect.addEventListener("change",()=>{ if(selectedDate) loadSlotsForDate(selectedDate); });
+
+function bookSlot(date,time,duration){
+  const packageName=packageSelect.options[packageSelect.selectedIndex].text;
   db.ref("bookings").push({date,time,duration,package:packageName});
   alert("Termin rezervisan!");
   window.open(`https://wa.me/381668009318?text=Rezervacija ${date} Paket: ${packageName}`);
-  loadSlots();
-}
-
-// --- Close modal on outside click ---
-window.onclick = function(event){
-  if(event.target === modal){ closeBooking(); }
+  if(selectedDate) loadSlotsForDate(selectedDate);
 }
 </script>
-
 </body>
 </html>
